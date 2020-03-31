@@ -3,7 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "Shader.h"
-
+#include <SOIL.h>
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 int main()
@@ -39,7 +39,10 @@ int main()
 		0.5f,1.0f
 	};
 
-	Shader ourShader("../Shader/default.vs", "../Shader/default.frag");
+	int width, height;
+	unsigned char* image = SOIL_load_image("../Texture/wall.jpg", &width, &height, 0, SOIL_LOAD_RGB);
+
+	Shader ourShader("../Texture/default.vs", "../Texture/default.frag");
 
 
 	GLuint VBO, VAO;
