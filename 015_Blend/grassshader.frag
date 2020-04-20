@@ -6,7 +6,7 @@ out vec4 color;
 void main()
 {
  vec4 texcolor = texture(ourTexture1,vec2(TexCoord.x,1-TexCoord.y));
- if(texcolor.a < 0.1)
-	discard;
+// if(texcolor.a < 0.1)
+//	discard;
 color = texcolor;
 }

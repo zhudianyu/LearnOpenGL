@@ -8,6 +8,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Shader.h"
 #include "Camera.h"
+#include <map>
 using namespace std;
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -163,6 +164,9 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
+	//透明混合
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	GLuint VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -185,6 +189,7 @@ int main()
 	GLuint grassTexture = GenAlphaTexture("../Resources/img/grass.png");
 	GLuint textureID = GenTexture("../Resources/img/wall.jpg");
 	GLuint faceTextureID = GenTexture("../Resources/img/awesomeface.png");
+	GLuint windowTexture = GenAlphaTexture("../Resources/img/blending_transparent_window.png");
 
 	//grass pos
 	vector<glm::vec3> vegetation;
@@ -231,6 +236,13 @@ int main()
   glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 	
+
+	std::map<float, glm::vec3> sorted;
+	for (int i = 0;i< vegetation.size();i++)
+	{
+		float distance = glm::length(camera.Position - vegetation[i]);
+		sorted[distance] = vegetation[i];
+	}
 	while (!glfwWindowShouldClose(window))
 	{
 		GLfloat currentFrame = glfwGetTime();
@@ -276,11 +288,11 @@ int main()
 		}
 		glBindVertexArray(0);
 
-	
+
 		grassShader.Use();
 		//设置草的纹理
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, grassTexture);
+		glBindTexture(GL_TEXTURE_2D, windowTexture);
 		//第二个参数传的是单元值
 		glUniform1i(glGetUniformLocation(grassShader.Program, "ourTexture1"), 1);
 		//绘制草
@@ -290,14 +302,13 @@ int main()
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 		glBindVertexArray(grassVAO);
-
-	
-
-		for (GLuint i = 0; i < vegetation.size(); i++)
+		//透明物体按距离从远到近绘制
+	   for(std::map<float,glm::vec3>::reverse_iterator it = sorted.rbegin();it != sorted.rend();++it)
+		//for (GLuint i = 0; i < vegetation.size(); i++)
 		{
 			glm::mat4 model(1.0f);
 		
-			model = glm::translate(model, vegetation[i]);
+			model = glm::translate(model, it->second);
 			glUniformMatrix4fv(glGetUniformLocation(grassShader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 		}
