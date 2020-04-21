@@ -186,6 +186,7 @@ int main()
 	glBindVertexArray(0);
 
 	Shader ourShader("../016_FrameBuffer/default.vs", "../016_FrameBuffer/default.frag");
+	Shader screenShader("../016_FrameBuffer/quad.vs", "../016_FrameBuffer/quad.frag");
 
 	GLuint textureID = GenTexture("../Resources/img/wall.jpg");
 	GLuint faceTextureID = GenTexture("../Resources/img/awesomeface.png");
@@ -193,6 +194,74 @@ int main()
 	//深度测试
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+
+	//fbo 创建帧缓冲对象
+	GLuint fbo;
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	//绑定纹理附件
+	GLuint textureColorBuffer;
+	glGenTextures(1, &textureColorBuffer);
+	glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
+	//最后一个参数表示创建的纹理 不填充
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WIDTH, HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+/*
+target：我们所创建的帧缓冲类型的目标（绘制、读取或两者都有）。
+attachment：我们所附加的附件的类型。现在我们附加的是一个颜色附件。需要注意，最后的那个0是暗示我们可以附加1个以上颜色的附件。我们会在后面的教程中谈到。
+textarget：你希望附加的纹理类型。
+texture：附加的实际纹理。
+level：Mipmap level。我们设置为0。
+*/
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
+
+
+	//创建渲染缓冲对象 一般用深度和模板 做附件
+	GLuint rbo;
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, WIDTH, HEIGHT);
+
+	//把渲染缓冲对象附加到帧缓冲的深度和模板附件上
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
+	{//绑定到默认缓冲
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	
+	}
+#pragma region 平面
+	float quadVertices[] = {
+		// positions   // texCoords
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+		 1.0f,  1.0f,  1.0f, 1.0f
+	};
+	GLuint quadVAO, quadVBO;
+	glGenVertexArrays(1, &quadVAO);
+	glBindVertexArray(quadVAO);
+
+	glGenBuffers(1, &quadVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GL_FLOAT), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+	//坐标属性的设置 对应顶点着色器的位置 layout location = 2 
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GL_FLOAT), (GLvoid*)(2 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+	//解绑vao
+	glBindVertexArray(0);
+#pragma endregion 平面
+	ourShader.Use();
+
+	glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture1"), 0);
+
+	screenShader.Use();
+	glUniform1i(glGetUniformLocation(screenShader.Program, "screenTexture"), 0);
 	while (!glfwWindowShouldClose(window))
 	{
 		GLfloat currentFrame = glfwGetTime();
@@ -200,13 +269,12 @@ int main()
 		lastFrame = currentFrame;
 		glfwPollEvents();
 		do_movement();
-
+		//first pass
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		glEnable(GL_DEPTH_TEST);
 		glClearColor(0.2, 0.3, 0.3, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		glUniform1i(glGetUniformLocation(ourShader.Program, "ourTexture1"), 0);
 		ourShader.Use();
 		glm::mat4 view(1.0f);
 		glm::mat4 projection(1.0f);
@@ -219,27 +287,40 @@ int main()
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
+		
 		glBindVertexArray(VAO);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureID);
 		for (GLuint i = 0; i < 10; i++)
 		{
 			glm::mat4 model(1.0f);
 			model = glm::translate(model, cubePositions[i]);
 			GLfloat angle = 0;
-			if (i % 3 == 0)
-			{
-				angle = (GLfloat)glfwGetTime() * 20.0f;
-			}
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1, 0.3f, 0.5f));
+			
+			model = glm::rotate(model, 20.0f, glm::vec3(1, 0.3f, 0.5f));
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 		glBindVertexArray(0);
+		//second pass帧缓冲
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glDisable(GL_DEPTH_TEST);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
 
+		screenShader.Use();
+		
+		glBindVertexArray(quadVAO);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(0);
 		glfwSwapBuffers(window);
 	}
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
+	glDeleteFramebuffers(1, &fbo);
 	glfwTerminate();
 	return 0;
 }

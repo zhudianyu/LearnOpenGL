@@ -139,6 +139,8 @@
     <None Include="default.frag" />
     <None Include="default.vs" />
     <None Include="grassshader.frag" />
+    <None Include="quad.frag" />
+    <None Include="quad.vs" />
     <None Include="shaderSingleColor.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
