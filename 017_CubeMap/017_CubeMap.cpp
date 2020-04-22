@@ -256,7 +256,7 @@ int main()
 
 	//深度测试
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+	glDepthFunc(GL_LEQUAL);
 #pragma region cubemaptexture
 	unsigned int cubeTextureID;
 	glGenTextures(1, &cubeTextureID);
@@ -377,24 +377,12 @@ int main()
 		glClearColor(0.2, 0.3, 0.3, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glDepthMask(GL_FALSE);
-		cubemapShader.Use();
-		glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTextureID);
-		glBindVertexArray(cubeMapVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
-		glDepthMask(GL_TRUE);
+
 
 		glm::mat4 view(1.0f);
 		glm::mat4 projection(1.0f);
-		view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
-		projection = glm::perspective(glm::radians(camera.Zoom), (GLfloat)800 / (GLfloat)600, 0.1f, 100.0f);
-		GLint modelLoc = glGetUniformLocation(cubemapShader.Program, "model");
-		GLuint viewLoc = glGetUniformLocation(cubemapShader.Program, "view");
-		GLuint projLoc = glGetUniformLocation(cubemapShader.Program, "projection");
+		projection = glm::perspective(glm::radians(camera.Zoom), (GLfloat)WIDTH / (GLfloat)HEIGHT, 0.1f, 100.0f);
 
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
 #pragma region cube
 		ourShader.Use();
@@ -436,6 +424,20 @@ int main()
 // 		glDrawArrays(GL_TRIANGLES, 0, 6);
 // 		glBindVertexArray(0);
 #pragma endregion renfbo
+		//天空盒放到最后渲染 减少片元着色器的调用 改变它的深度值为最大值
+#pragma region skybox 
+	//	glDepthMask(GL_FALSE);
+		cubemapShader.Use();
+		view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
+		ourShader.setMat("view", view);
+		ourShader.setMat("projection", projection);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTextureID);
+		glBindVertexArray(cubeMapVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+		//glDepthMask(GL_TRUE);
+#pragma endregion
+
 		glfwSwapBuffers(window);
 	}
 	glDeleteVertexArrays(1, &VAO);
