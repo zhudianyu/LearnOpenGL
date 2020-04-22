@@ -194,7 +194,49 @@ int main()
 		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
 		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f  // bottom-left        
 	};
+	float verticesNormal[] = {
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+	};
 	GLfloat texCoords[] = {
 		0,0,//左下
 		1,0,//右下
@@ -221,12 +263,12 @@ int main()
 
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesNormal), verticesNormal, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (GLvoid*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (GLvoid*)0);
 	glEnableVertexAttribArray(0);
 	//坐标属性的设置 对应顶点着色器的位置 layout location = 2 
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GLfloat)));
+	glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 6 * sizeof(GL_FLOAT), (GLvoid*)(3 * sizeof(GLfloat)));
 	glEnableVertexAttribArray(1);
 	//解绑vao
 	glBindVertexArray(0);
@@ -245,11 +287,11 @@ int main()
 
 	//解绑vao
 	glBindVertexArray(0);
-	Shader ourShader("../017_CubeMap/default.vs", "../017_CubeMap/default.frag");
+	Shader ourShader("../017_CubeMap/cubeNormal.vs", "../017_CubeMap/cubeReflectSkybox.frag");
 	Shader screenShader("../017_CubeMap/quad.vs", "../017_CubeMap/quad.frag");
 	Shader cubemapShader("../017_CubeMap/cubemap.vs", "../017_CubeMap/cubemap.frag");
 	cubemapShader.Use();
-	cubemapShader.setInt("ourTexture", 0);
+	cubemapShader.setInt("skybox", 0);
 
 	GLuint textureID = GenTexture("../Resources/img/wall.jpg");
 	GLuint faceTextureID = GenTexture("../Resources/img/awesomeface.png");
@@ -389,9 +431,10 @@ int main()
 		view = camera.GetViewMatrix();
 		ourShader.setMat("view",view);
 		ourShader.setMat("projection",projection);
+		ourShader.setVec3("cameraPos", camera.Position);
 		glBindVertexArray(VAO);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureID);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTextureID);
 		for (GLuint i = 0; i < 10; i++)
 		{
 			glm::mat4 model(1.0f);
@@ -427,14 +470,17 @@ int main()
 		//天空盒放到最后渲染 减少片元着色器的调用 改变它的深度值为最大值
 #pragma region skybox 
 	//	glDepthMask(GL_FALSE);
+		   // draw skybox as last
+		glDepthFunc(GL_LEQUAL);
 		cubemapShader.Use();
 		view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
-		ourShader.setMat("view", view);
-		ourShader.setMat("projection", projection);
+		cubemapShader.setMat("view", view);
+		cubemapShader.setMat("projection", projection);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubeTextureID);
 		glBindVertexArray(cubeMapVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
+		glDepthFunc(GL_LESS); // set depth function back to default
 		//glDepthMask(GL_TRUE);
 #pragma endregion
 

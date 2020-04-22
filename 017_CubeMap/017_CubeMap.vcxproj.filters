@@ -45,5 +45,11 @@
     <None Include="cubemap.frag">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="cubeNormal.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="cubeReflectSkybox.frag">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -138,6 +138,8 @@
   <ItemGroup>
     <None Include="cubemap.frag" />
     <None Include="cubemap.vs" />
+    <None Include="cubeNormal.vs" />
+    <None Include="cubeReflectSkybox.frag" />
     <None Include="default.frag" />
     <None Include="default.vs" />
     <None Include="grassshader.frag" />
