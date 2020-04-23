@@ -52,5 +52,6 @@
     <None Include="quad.vert">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="quadarray.vert" />
   </ItemGroup>
 </Project>
