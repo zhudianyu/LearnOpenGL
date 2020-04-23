@@ -9,6 +9,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include <map>
+#include "Model.h"
 using namespace std;
 // Window dimensions
 const GLuint WIDTH = 800, HEIGHT = 600;
@@ -133,6 +134,9 @@ int main()
 	glEnableVertexAttribArray(1);
 	glBindVertexArray(0);
 
+	GLchar modelpath[] = "../Resources/013/nanosuit/nanosuit.obj";
+	Model ourmodel(modelpath);
+	Shader ourShader("../019_GeometryShader/model.vs", "../019_GeometryShader/model.frag","../019_GeometryShader/model.gs");
 	while (!glfwWindowShouldClose(window))
 	{
 		GLfloat currentFrame = glfwGetTime();
@@ -150,14 +154,22 @@ int main()
 		PointShader.Use();
 		glm::mat4 view(1.0f);
 		view = camera.GetViewMatrix();
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)800 / (float)600, 0.1f, 100.0f);
 
 		glBindVertexArray(pVAO);
 		glDrawArrays(GL_POINTS, 0, 4);
 		glBindVertexArray(0);
-
-
-
-
+		ourShader.Use();
+		ourShader.setMat("projection", projection);
+		ourShader.setMat("view", view);
+		// render the loaded model
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, -1.7f, -10.f)); // translate it down so it's at the center of the scene
+		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+		ourShader.setMat("model", model);
+		ourShader.setFloat("time", glfwGetTime());
+		ourmodel.Draw(ourShader);
+	
 		glfwSwapBuffers(window);
 	}
 
