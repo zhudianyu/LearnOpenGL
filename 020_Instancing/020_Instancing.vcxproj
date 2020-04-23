@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="020_Instancing.cpp" />
+    <ClCompile Include="020_InstancingStar.cpp" />
     <ClCompile Include="common\Camera.cpp" />
     <ClCompile Include="common\Mesh.cpp" />
     <ClCompile Include="common\Model.cpp" />
@@ -140,9 +141,12 @@
     <ClInclude Include="common\Shader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="default.frag" />
+    <None Include="default.vert" />
     <None Include="quad.frag" />
     <None Include="quad.vert" />
     <None Include="quadarray.vert" />
+    <None Include="rockarray.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

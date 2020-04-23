@@ -4,6 +4,10 @@ Model::Model(GLchar* path)
 {
 		loadModel(path);
 }
+Model::Model(const char* path)
+{
+	loadModel(path);
+}
 void Model::Draw(Shader shader)
 {
 	for (GLuint i = 0;i<meshes.size();i++)

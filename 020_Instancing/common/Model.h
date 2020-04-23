@@ -19,14 +19,16 @@ class Model
 {
 public:
 	Model(GLchar* path);
-	
+	Model(const char* path);
 	void Draw(Shader shader);
-private:
 	vector<Mesh> meshes;
+	vector<Texture> textures_loaded;
+private:
+
 	string directory;
 
 
-	vector<Texture> textures_loaded;
+
 	void loadModel(string path);
 	void processNode(aiNode* node, const aiScene* scene);
 	Mesh processMesh(aiMesh* mesh, const aiScene* scene);

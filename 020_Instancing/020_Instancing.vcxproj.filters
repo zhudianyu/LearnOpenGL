@@ -30,6 +30,9 @@
     <ClCompile Include="common\Shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="020_InstancingStar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\Camera.h">
@@ -53,5 +56,14 @@
       <Filter>资源文件</Filter>
     </None>
     <None Include="quadarray.vert" />
+    <None Include="default.vert">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="default.frag">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="rockarray.vert">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

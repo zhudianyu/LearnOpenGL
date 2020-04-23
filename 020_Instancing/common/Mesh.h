@@ -34,8 +34,9 @@ public:
 	Mesh(vector<Vertex> vertices, vector<GLuint> indices, vector<Texture> texures);
 
 	void Draw(Shader shader);
+	GLuint VAO;
 private:
-	GLuint VAO, VBO, EBO;
+	GLuint  VBO, EBO;
 	void setupMesh();
  
 };
