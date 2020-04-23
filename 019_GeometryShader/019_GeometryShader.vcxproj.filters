@@ -54,5 +54,18 @@
     <None Include="model.gs">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="modeldefault.frag">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="modelnormal.frag">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="modelnormal.gs" />
+    <None Include="modelnormal.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="modeldefault.vs">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

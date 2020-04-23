@@ -144,6 +144,11 @@
     <None Include="model.frag" />
     <None Include="model.gs" />
     <None Include="model.vs" />
+    <None Include="modeldefault.frag" />
+    <None Include="modeldefault.vs" />
+    <None Include="modelnormal.vs" />
+    <None Include="modelnormal.frag" />
+    <None Include="modelnormal.gs" />
     <None Include="Point.frag" />
     <None Include="Point.vs" />
   </ItemGroup>

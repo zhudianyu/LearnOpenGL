@@ -136,7 +136,12 @@ int main()
 
 	GLchar modelpath[] = "../Resources/013/nanosuit/nanosuit.obj";
 	Model ourmodel(modelpath);
+	Model defaultModel(modelpath);
+	Model normalModel(modelpath);
+	
 	Shader ourShader("../019_GeometryShader/model.vs", "../019_GeometryShader/model.frag","../019_GeometryShader/model.gs");
+	Shader defaultmodelShader("../019_GeometryShader/modeldefault.vs", "../019_GeometryShader/modeldefault.frag");
+	Shader normalShader("../019_GeometryShader/modelnormal.vs", "../019_GeometryShader/modelnormal.frag","../019_GeometryShader/modelnormal.gs");
 	while (!glfwWindowShouldClose(window))
 	{
 		GLfloat currentFrame = glfwGetTime();
@@ -170,6 +175,27 @@ int main()
 		ourShader.setFloat("time", glfwGetTime());
 		ourmodel.Draw(ourShader);
 	
+		defaultmodelShader.Use();
+		defaultmodelShader.setMat("projection", projection);
+		defaultmodelShader.setMat("view", view);
+		// render the loaded model
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(2.0f, -1.7f, -10.f)); // translate it down so it's at the center of the scene
+		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+		defaultmodelShader.setMat("model", model);
+
+		defaultModel.Draw(defaultmodelShader);
+
+		normalShader.Use();
+		normalShader.setMat("projection", projection);
+		normalShader.setMat("view", view);
+		// render the loaded model
+	    model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(2.0f, -1.7f, -10.f)); // translate it down so it's at the center of the scene
+		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+		normalShader.setMat("model", model);
+
+		normalModel.Draw(normalShader);
 		glfwSwapBuffers(window);
 	}
 
