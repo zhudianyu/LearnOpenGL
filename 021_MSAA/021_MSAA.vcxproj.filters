@@ -52,5 +52,11 @@
     <None Include="cube.frag">
       <Filter>源文件</Filter>
     </None>
+    <None Include="screen.vert">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="screen.frag">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>
