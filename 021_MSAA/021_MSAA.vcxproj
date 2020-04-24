@@ -139,6 +139,10 @@
     <ClInclude Include="..\common\Model.h" />
     <ClInclude Include="..\common\Shader.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="cube.frag" />
+    <None Include="cube.vert" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

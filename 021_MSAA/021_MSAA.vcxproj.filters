@@ -45,4 +45,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="cube.vert">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="cube.frag">
+      <Filter>源文件</Filter>
+    </None>
+  </ItemGroup>
 </Project>
