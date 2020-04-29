@@ -291,7 +291,7 @@ int main()
 	shader.setInt("diffuseMap", 0);
 	shader.setInt("normalMap", 1);
 	shader.setInt("depthMap", 2);
-	glm::vec3 lightPos(0.5f, 1.0f, -10.3f);
+	glm::vec3 lightPos(0.5f, 2.0f, -9.0f);
 	while (!glfwWindowShouldClose(window))
 	{
 		GLfloat currentFrame = glfwGetTime();
@@ -310,11 +310,11 @@ int main()
 		shader.setMat("view", view);
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(0, 0, -10.0f));
-		model = glm::rotate(model, glm::radians((float)glfwGetTime() * -10.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0))); // rotate the quad to show normal mapping from multiple directions
+	//WW	model = glm::rotate(model, glm::radians((float)glfwGetTime() * -10.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0))); // rotate the quad to show normal mapping from multiple directions
 		shader.setMat("model", model);
 		shader.setVec3("viewPos", camera.Position);
 		shader.setVec3("lightPos", lightPos);
-		shader.setFloat("hight_Scale", 2);
+		shader.setFloat("hight_Scale", 1);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseMap);
 		glActiveTexture(GL_TEXTURE1);
