@@ -245,7 +245,7 @@ int main()
 	{
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // makes sure errors are displayed synchronously
-		//glDebugMessageCallback(glDebugOutput, nullptr);
+		glDebugMessageCallback(glDebugOutput, nullptr);
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 	}
 	//把每一个片段着色器的结果 存储在个采样点上 最后对采样点的结果进行平均
@@ -288,7 +288,7 @@ int main()
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		cout << "framebuffer not complete" << endl;
+		cout << "framebuffer not complete fbo "<< glCheckFramebufferStatus(GL_FRAMEBUFFER) << endl;
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -308,10 +308,10 @@ int main()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glFramebufferTexture2D(GL_TEXTURE_2D, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongBuffer[i], 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongBuffer[i], 0);
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		{
-			cout << "framebuffer not complete" << endl;
+			cout << "framebuffer not complete id is "<< glCheckFramebufferStatus(GL_FRAMEBUFFER) << endl;
 		}
 	}
 	float offset = -10;
