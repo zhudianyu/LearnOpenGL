@@ -403,7 +403,7 @@ int main()
 		//处理模糊
 		//得到hdr缓冲区 提取亮的纹理填充帧缓冲 然后模糊
 		GLboolean horizontal = true, first_iteration = true;
-		GLuint amonut = 10;
+		GLuint amonut = 12;
 
 		shaderBlur.Use();
 		for (GLuint i = 0; i < amonut; i++)
@@ -419,7 +419,7 @@ int main()
 			{
 				first_iteration = false;
 			}
-			
+	
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		//后处理 把不带hdr的场景图 和经过模糊的hdr图片 合成
