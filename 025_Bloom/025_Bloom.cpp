@@ -410,6 +410,7 @@ int main()
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
 			shaderBlur.setInt("horizontal", horizontal);
+			//使用hdr 场景图片填充image 画到pingpong 缓冲区的平面四方体上
 			glBindTexture(GL_TEXTURE_2D, first_iteration ? colorBuffers[1] : pingpongBuffer[!horizontal]);
 
 			RendQuad();
@@ -418,10 +419,10 @@ int main()
 			{
 				first_iteration = false;
 			}
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			
 		}
-	
-		//后处理
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		//后处理 把不带hdr的场景图 和经过模糊的hdr图片 合成
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		shaderBloomFinal.Use();
 		glActiveTexture(GL_TEXTURE0);
