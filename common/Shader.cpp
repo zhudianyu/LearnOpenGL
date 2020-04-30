@@ -5,7 +5,16 @@
 using namespace std;
 Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath,const GLchar* geometryPath )
 {
+	Create(vertexPath, fragmentPath, geometryPath);
+	
+}
 
+Shader::Shader(string vertexPath, string fragmentPath)
+{
+	Create(vertexPath.c_str(), fragmentPath.c_str(), NULL);
+}
+void Shader::Create(const GLchar* vertexPath, const GLchar* fragmentPath, const GLchar* geometryPath )
+{
 	string vertexCode;
 	string fragmentCode;
 	string geometryCode;
@@ -75,7 +84,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath,const GLchar
 	if (geometryPath != NULL)
 	{
 		const GLchar* gshaderCode = geometryCode.c_str();
-	
+
 		geo = glCreateShader(GL_GEOMETRY_SHADER);
 		glShaderSource(geo, 1, &gshaderCode, NULL);
 		glCompileShader(geo);
@@ -88,7 +97,7 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath,const GLchar
 			glGetShaderInfoLog(geo, 512, NULL, infolog);
 			cout << "error geo shader compile " << infolog << endl;
 		}
-		
+
 
 	}
 	Program = glCreateProgram();
@@ -111,8 +120,8 @@ Shader::Shader(const GLchar* vertexPath, const GLchar* fragmentPath,const GLchar
 	{
 		glDeleteShader(geo);
 	}
-}
 
+}
 void Shader::Use()
 {
 	glUseProgram(this->Program);
@@ -136,7 +145,10 @@ void Shader::setMat(const std::string& name, glm::mat4 value)
 	GLuint loc = glGetUniformLocation(Program, name.c_str());
 	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(value));
 }
-
+void Shader::setMat4(const std::string& name, glm::mat4 value)
+{
+	setMat(name, value);
+}
 void Shader::setVec3(const std::string& name, glm::vec3 vaue)
 {
 	GLuint loc = glGetUniformLocation(Program, name.c_str());
