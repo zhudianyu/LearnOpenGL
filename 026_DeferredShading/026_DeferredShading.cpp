@@ -29,6 +29,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void do_movement();
 void renderCube();
 void RendQuad();
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 bool hdr = true;
 float exposure = 1.0f;
 const string projName = "026_DeferredShading";
@@ -117,7 +118,7 @@ int main()
 	//告诉gl 我们将要使用（帧缓冲）的哪种颜色附件来进行渲染
 	GLuint attachments[3] = { GL_COLOR_ATTACHMENT0,GL_COLOR_ATTACHMENT1,GL_COLOR_ATTACHMENT2 };
 	glDrawBuffers(3, attachments);
-	glBindRenderbuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	float offset = -10;
 
@@ -223,20 +224,20 @@ int main()
 		glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		//渲染灯光
-
-		shaderLightBox.Use();
-		shaderLightBox.setMat("projection", projection);
-		shaderLightBox.setMat("view", view);
-		for (unsigned int i = 0; i < lightPositions.size(); i++)
-		{
-			model = glm::mat4(1.0f);
-			model = glm::translate(model, lightPositions[i]);
-			model = glm::scale(model, glm::vec3(0.125f));
-			shaderLightBox.setMat4("model", model);
-			shaderLightBox.setVec3("lightColor", lightColors[i]);
-			renderCube();
-		}
+ 		//渲染灯光
+ 
+ 		shaderLightBox.Use();
+ 		shaderLightBox.setMat("projection", projection);
+ 		shaderLightBox.setMat("view", view);
+ 		for (unsigned int i = 0; i < lightPositions.size(); i++)
+ 		{
+ 			model = glm::mat4(1.0f);
+ 			model = glm::translate(model, lightPositions[i]);
+ 			model = glm::scale(model, glm::vec3(0.125f));
+ 			shaderLightBox.setMat4("model", model);
+ 			shaderLightBox.setVec3("lightColor", lightColors[i]);
+ 			renderCube();
+ 		}
 		glfwSwapBuffers(window);
 
 	}
@@ -595,10 +596,11 @@ GLFWwindow* InitGL()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); // comment this line in a release build! 
 	//开启多重采样
-	glfwWindowHint(GLFW_SAMPLES, 4);
+	//glfwWindowHint(GLFW_SAMPLES, 4);
 	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, projName.c_str(), nullptr, nullptr);
 	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, key_callback);
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 
@@ -624,4 +626,10 @@ void RendCubeByPos(Shader shader, glm::vec3 position, glm::vec3 scale, float rot
 	model = glm::scale(model, scale);
 	shader.setMat4("model", model);
 	renderCube();
+}
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	// make sure the viewport matches the new window dimensions; note that width and 
+	// height will be significantly larger than specified on retina displays.
+	glViewport(0, 0, width, height);
 }
