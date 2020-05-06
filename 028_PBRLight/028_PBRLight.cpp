@@ -37,7 +37,7 @@ const string projName = "028_PBRLight";
 int bloom = 2;
 GLuint GenTexture(const char* path);
 GLuint GenAlphaTexture(const char* path);
-unsigned int loadTexture(char const* path, bool gammaCorrection);
+unsigned int loadTexture(char const* path, bool gammaCorrection = false);
 GLenum glCheckError_(const char* file, int line);
 #define glCheckError() glCheckError_(__FILE__, __LINE__)
 void APIENTRY glDebugOutput(GLenum source,
@@ -102,7 +102,18 @@ int main()
 	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 	shader.Use();
 	shader.setMat4("projection", projection);
+	shader.setInt("albedoMap", 0);
+	shader.setInt("normalMap", 1);
+	shader.setInt("metallicMap", 2);
+	shader.setInt("roughnessMap", 3);
+	shader.setInt("aoMap", 4);
 
+
+	unsigned int albedo = loadTexture("../Resources/img/pbr/rusted_iron/albedo.png");
+	unsigned int normal = loadTexture("../Resources/img/pbr/rusted_iron/normal.png");
+	unsigned int metallic = loadTexture("../Resources/img/pbr/rusted_iron/metallic.png");
+	unsigned int roughness = loadTexture("../Resources/img/pbr/rusted_iron/roughness.png");
+	unsigned int ao = loadTexture("../Resources/img/pbr/rusted_iron/ao.png");
 	while (!glfwWindowShouldClose(window))
 	{
 		GLfloat currentFrame = glfwGetTime();
@@ -118,15 +129,25 @@ int main()
 		glm::mat4 view = camera.GetViewMatrix();
 		shader.setMat4("view", view);
 		shader.setVec3("camPos", camera.Position);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, albedo);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, normal);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, metallic);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, roughness);
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, ao);
 		glm::mat4 model = glm::mat4(1.0f);
 		for (int row = 0; row < nrRows; ++row)
 		{
-			shader.setFloat("metallic", (float)row / (float)nrRows);
+			//shader.setFloat("metallic", (float)row / (float)nrRows);
 			for (int col = 0; col < nrColumns; ++col)
 			{
 				// we clamp the roughness to 0.025 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look a bit off
 				// on direct lighting.
-				shader.setFloat("roughness", glm::clamp((float)col / (float)nrColumns, 0.05f, 1.0f));
+				//shader.setFloat("roughness", glm::clamp((float)col / (float)nrColumns, 0.05f, 1.0f));
 
 				model = glm::mat4(1.0f);
 				model = glm::translate(model, glm::vec3(
@@ -361,7 +382,7 @@ GLuint GenAlphaTexture(const char* path)
 	glBindTexture(GL_TEXTURE_2D, 0);
 	return textureID;
 }
-unsigned int loadTexture(char const* path, bool gammaCorrection)
+unsigned int loadTexture(char const* path, bool gammaCorrection )
 {
 	unsigned int textureID;
 	glGenTextures(1, &textureID);
